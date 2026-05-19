@@ -393,35 +393,56 @@ async function checkBackend(){
   }
 }
 
-/* ══════ SOLVE SINGLE ══════════════════════════════════════ */
+/* ══════ SOLVE SINGLE (UPDATED: COLD-START & OFFLINE PROOF) ══════════════ */
 async function doSolve(){
-  if(!backendReady||isStreaming)return;
-  const val=parseInt(numInput.value);
-  if(isNaN(val)||val<1||val>100){numInput.style.borderColor='#ff6b35';setTimeout(()=>numInput.style.borderColor='',900);return}
-  document.querySelectorAll('.gc').forEach(c=>{if(!c.classList.contains('solved')&&!c.classList.contains('done'))c.classList.remove('active')});
-  const cell=document.getElementById(`gc-${val}`);
-  if(cell){cell.classList.add('active');cell.scrollIntoView({behavior:'smooth',block:'nearest'})}
-  solveBtn.disabled=true;resultCard.style.display='none';
-  try{
-    const r=await fetch(`https://introtoaiproject-production.up.railway.app/api/solve/${val}`);
-    const data=await r.json();
-    showResult(data);
-  }catch{
-    resultCard.style.display='block';resultCard.className='';
-    resHead.textContent='Connection Error';exprBox.textContent='Backend unreachable.';
+  if(!backendReady || isStreaming) return;
+  const val = parseInt(numInput.value);
+  if(isNaN(val)||val<1||val>100){numInput.style.borderColor='#ff6b35';setTimeout(()=>numInput.style.borderColor='',900);return}
+  
+  document.querySelectorAll('.gc').forEach(c=>{if(!c.classList.contains('solved')&&!c.classList.contains('done'))c.classList.remove('active')});
+  const cell = document.getElementById(`gc-${val}`);
+  if(cell){cell.classList.add('active'); cell.scrollIntoView({behavior:'smooth',block:'nearest'})}
+  
+  solveBtn.disabled = true; 
+  
+  // OPTIMIZATION: Agar yeh number hum live streaming mein pehle hi solve kar chuke hain,
+  // toh server par request bhej kar wait karne ki zaroorat nahi, seedha display karo!
+  if (solvedMap && solvedMap[val]) {
+      showResult({ found: true, target: val, solution: solvedMap[val] });
+      solveBtn.disabled = false;
+      return;
   }
-  solveBtn.disabled=false;
+
+  // Agar memory mein nahi hai (jaise page fresh load hua hai), toh server se mangwao
+  try {
+    const r = await fetch(`https://introtoaiproject-production.up.railway.app/api/solve/${val}`);
+    const data = await r.json();
+    showResult(data);
+  } catch {
+    resultCard.style.display = 'block';
+    resultCard.className = '';
+    resHead.textContent = 'Connection Error';
+    exprBox.textContent = 'Backend is currently sleeping. Click "▶ SOLVE ALL LIVE" to wake it up and sync numbers.';
+  }
+  solveBtn.disabled = false;
 }
 
 function showResult(data){
-  resultCard.style.display='block';
-  if(data.found){
-    resultCard.className='found';
-    resBadge.className='res-badge rb-found';resBadge.textContent=data.target;
-    resSmall.textContent='SOLUTION FOUND';resHead.textContent=`Target: ${data.target}`;
-    exprBox.innerHTML=hi(data.solution)+` <span class="hi-p">= ${data.target}</span>`;
-    const dep=depth(data.solution);
-    dbFill.style.width=Math.min(100,dep/2)+'%';depthV.textContent=dep;
+  resultCard.style.display = 'block';
+  if(data && data.found){
+    resultCard.className = 'found';
+    resBadge.className = 'res-badge rb-found'; resBadge.textContent = data.target;
+    resSmall.textContent = 'SOLUTION FOUND'; resHead.textContent = `Target: ${data.target}`;
+    exprBox.innerHTML = hi(data.solution) + ` <span class="hi-p">= ${data.target}</span>`;
+    const dep = depth(data.solution);
+    dbFill.style.width = Math.min(100, dep/2)+'%'; depthV.textContent = dep;
+  } else {
+    // Agar number abhi tak dhoonda hi nahi gaya
+    resultCard.className = '';
+    resBadge.className = 'res-badge'; resBadge.textContent = '?';
+    resSmall.textContent = 'NOT FOUND YET'; resHead.textContent = `Target: ${data.target || numInput.value}`;
+    exprBox.textContent = 'This number has not been explored by BFS yet. Run the live stream solver to find it.';
+    dbFill.style.width = '0%'; depthV.textContent = '0';
   }
 }
 
