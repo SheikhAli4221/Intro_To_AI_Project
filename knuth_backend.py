@@ -177,8 +177,10 @@ import json
 import time
 from collections import deque
 import math
+from flask_cors import CORS  # Add this import
 
 app = Flask(__name__)
+CORS(app)  # Add this line right after 'app' is defined
 
 # Global state variables
 solutions = {}
@@ -345,10 +347,12 @@ def stream_solutions():
                              'Access-Control-Allow-Origin': '*'})
 
 if __name__ == '__main__':
-    # 1. Start the solver in a separate background thread
+    import os
+    # Use the PORT environment variable if available, otherwise default to 5000
+    port = int(os.environ.get("PORT", 5000))
+
     solver_thread = threading.Thread(target=run_background_solver)
-    solver_thread.daemon = True  # This ensures the thread dies when you stop the server
+    solver_thread.daemon = True
     solver_thread.start()
-    
-    # 2. Start the Flask app immediately on the main thread
-    app.run(debug=False, port=5000, threaded=True)
+
+    app.run(host='0.0.0.0', port=port, threaded=True)
