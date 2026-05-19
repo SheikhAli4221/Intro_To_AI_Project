@@ -370,22 +370,27 @@ function buildGrid(){
 function cellClass(t,cls){const c=document.getElementById(`gc-${t}`);if(c){c.className='gc '+cls}}
 
 /* ══════ BACKEND CHECK ═════════════════════════════════════ */
+/* ══════ BACKEND CHECK (FIXED FOR ASYNC BACKEND) ═══════════════════════ */
 async function checkBackend(){
-  try{
-    const r=await fetch('https://introtoaiproject-production.up.railway.app/api/status');
-    if(!r.ok)throw 0;
-    const d=await r.json();
-    if(d.ready){
-      statusBar.classList.add('ready');
-      statusTxt.textContent=`✓ Backend ready — ${d.solved}/100 pre-computed`;
-      solveBtn.disabled=false;allBtn.disabled=false;
-      backendReady=true;
-      gStart();
-    }
-  }catch{
-    statusTxt.textContent='Backend offline — run: python knuth_backend.py';
-    setTimeout(checkBackend,3000);
-  }
+  try{
+    const r=await fetch('https://introtoaiproject-production.up.railway.app/api/status');
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    
+    // FIXED: Ab hum d.ready ka wait nahi karenge, bas check karenge data sahi aaya hai ya nahi
+    if(d && typeof d.solved !== 'undefined'){
+      statusBar.classList.add('ready');
+      statusTxt.textContent=`✓ Backend Cloud Live — Click 'SOLVE ALL LIVE' to start`;
+      solveBtn.disabled=false;
+      allBtn.disabled=false;
+      backendReady=true;
+      gStart();
+    }
+  }catch{
+    statusBar.classList.remove('ready');
+    statusTxt.textContent='Backend offline — checking connection again...';
+    setTimeout(checkBackend,3000);
+  }
 }
 
 /* ══════ SOLVE SINGLE ══════════════════════════════════════ */
