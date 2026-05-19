@@ -166,195 +166,138 @@ def solve_all():
 
     return solutions, targets_remaining
 
-# ---------------------------------------------------------------------------
-# Flask Web Server (Asynchronous Startup)
-# ---------------------------------------------------------------------------
-
-from flask import Flask, jsonify, send_file, Response
-import os
+from flask import Flask, jsonify, send_file
+from flask_cors import CORS
 import threading
 import json
 import time
 from collections import deque
 import math
-from flask_cors import CORS  # Add this import
 
 app = Flask(__name__)
-CORS(app)  # Add this line right after 'app' is defined
+CORS(app)
 
-# Global state variables
+# Global thread-safe states
 solutions = {}
-unsolved = []
-is_computing = True
+is_computing = False
+new_solutions_queue = [] # Jo naye solutions milenge, yahan temporary store honge
+states_explored = 0
 
-def run_background_solver():
-    """Runs the heavy BFS calculation in the background so the server doesn't freeze."""
-    global solutions, unsolved, is_computing
-    print("\n [Background] Pre-computing all solutions (BFS running)...")
+def run_bfs_solver():
+    """Heavy BFS runs safely in this isolated background thread."""
+    global solutions, is_computing, new_solutions_queue, states_explored
     
-    # Assuming solve_all() is defined above in your file
-    # We update the global dictionaries directly
-    temp_solutions, temp_unsolved = solve_all()
-    solutions.update(temp_solutions)
-    unsolved.extend(temp_unsolved)
-    
+    _targets_remaining = set(range(1, 101))
+    _visited = set()
+    _queue = deque()
+
+    _start_N, _start_k = 4, 0
+    _visited.add((_start_N, _start_k))
+    _queue.append((_start_N, _start_k, "4"))
+
+    if 4 in _targets_remaining:
+        solutions[4] = "4"
+        _targets_remaining.discard(4)
+        new_solutions_queue.append({'target': 4, 'solution': "4"})
+
+    _MAX_STATES = 30_000_000
+
+    while _queue and _targets_remaining and states_explored < _MAX_STATES:
+        N, k, path = _queue.popleft()
+        states_explored += 1
+
+        # 1. SQRT
+        if k < MAX_K:
+            nN, nk = N, k + 1
+            if (nN, nk) not in _visited:
+                _visited.add((nN, nk))
+                np = f"√({path})"
+                if exact_value_is_integer(nN, nk):
+                    val = exact_integer_value(nN, nk)
+                    if val in _targets_remaining:
+                        solutions[val] = np
+                        _targets_remaining.discard(val)
+                        new_solutions_queue.append({'target': val, 'solution': np})
+                _queue.append((nN, nk, np))
+
+        # 2. FLOOR
+        if k > 0:
+            if hasattr(N, 'bit_length') and N.bit_length() > 500000:
+                continue
+            fv = int_root_floor(N, k)
+            nN, nk = fv, 0
+            if (nN, nk) not in _visited:
+                _visited.add((nN, nk))
+                np = f"⌊{path}⌋"
+                if fv in _targets_remaining:
+                    solutions[fv] = np
+                    _targets_remaining.discard(fv)
+                    new_solutions_queue.append({'target': fv, 'solution': np})
+                _queue.append((nN, nk, np))
+
+        # 3. FACTORIAL
+        if k == 0 and 0 <= N <= MAX_FACTORIAL_ARG:
+            fval = math.factorial(N)
+            if fval.bit_length() <= MAX_N_BITS:
+                nN, nk = fval, 0
+                if (nN, nk) not in _visited:
+                    _visited.add((nN, nk))
+                    np = f"({path})!"
+                    if fval in _targets_remaining:
+                        solutions[val] = np
+                        _targets_remaining.discard(fval)
+                        new_solutions_queue.append({'target': fval, 'solution': np})
+                _queue.append((nN, nk, np))
+
+        if not _targets_remaining:
+            break
+
+        # CPU Throttling for cloud stability
+        if states_explored % 2000 == 0:
+            time.sleep(0.001)
+
     is_computing = False
-    print(f"\n [Background] ✓ Search complete! {len(solutions)}/100 targets solved.")
-
-print("=" * 72)
-print("  Donald Knuth Problem  —  LIMIT 100")
-print("  Allowed operations:  n!   √n   ⌊n⌋")
-print("  Using exact integer arithmetic (no float precision loss)")
-print("=" * 72)
-print("\n Server starting INSTANTLY on http://localhost:5000")
-print(" Open knuth_frontend.html in your browser.\n")
-
-@app.route('/')
-def index():
-    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'knuth_frontend.html')
-    if os.path.exists(html_path):
-        return send_file(html_path)
-    return "<h1>Please open knuth_frontend.html in your browser.</h1>"
-
-@app.route('/api/solve/<int:target>')
-def solve_target(target):
-    if target < 1 or target > 100:
-        return jsonify({'error': 'Target must be between 1 and 100'}), 400
-    
-    # If the background thread is still running and hasn't found it yet
-    if target not in solutions and is_computing:
-        return jsonify({'target': target, 'solution': None, 'found': False, 'message': 'Still computing in background...'})
-        
-    if target in solutions:
-        return jsonify({'target': target, 'solution': solutions[target], 'found': True})
-    else:
-        return jsonify({'target': target, 'solution': None, 'found': False})
-
-@app.route('/api/all')
-def all_solutions():
-    result = {}
-    for t in range(1, 101):
-        result[str(t)] = solutions.get(t, None)
-    return jsonify(result)
 
 @app.route('/api/status')
 def status():
-    # Frontend can use this to know if the backend is still thinking
     return jsonify({
-        'ready': not is_computing, 
-        'solved': len(solutions), 
-        'total': 100
+        'ready': True,
+        'solved': len(solutions),
+        'total': 100,
+        'is_computing': is_computing
     })
 
-# ---------------------------------------------------------------------------
-# SSE streaming endpoint (Kept exactly as you had it)
-# ---------------------------------------------------------------------------
-
-@app.route('/api/stream')
-def stream_solutions():
-    """
-    Server-Sent Events stream.  Re-runs the BFS and emits each solution
-    as soon as it is found, so the frontend can display them live.
-    """
-    def generate():
-        _targets_remaining = set(range(1, 101))
-        _solutions = {}
-        _visited = set()
-
-        def _vkey(N, k):
-            return (N, k)
-
-        _start_N, _start_k = 4, 0
-        _visited.add(_vkey(_start_N, _start_k))
-        _queue = deque()
-        _queue.append((_start_N, _start_k, "4"))
-
-        if 4 in _targets_remaining:
-            _solutions[4] = "4"
-            _targets_remaining.discard(4)
-            payload = json.dumps({'target': 4, 'solution': "4", 'remaining': len(_targets_remaining)})
-            yield f"data: {payload}\n\n"
-
-        _states_explored = 0
-        _MAX_STATES = 30_000_000
+@app.route('/api/start_solve', methods=['GET', 'POST'])
+def start_solve():
+    global is_computing, solutions, new_solutions_queue, states_explored
+    if not is_computing:
+        solutions.clear()
+        new_solutions_queue.clear()
+        states_explored = 0
+        is_computing = True
         
-        # NOTE: Make sure MAX_K, exact_value_is_integer, exact_integer_value, 
-        # int_root_floor, MAX_FACTORIAL_ARG, MAX_N_BITS are defined globally!
+        # Trigger the thread
+        t = threading.Thread(target=run_bfs_solver)
+        t.daemon = True
+        t.start()
+        return jsonify({'status': 'started'})
+    return jsonify({'status': 'already_running'})
 
-        while _queue and _targets_remaining and _states_explored < _MAX_STATES:
-            N, k, path = _queue.popleft()
-            _states_explored += 1
-
-            # 1. sqrt
-            if k < MAX_K:
-                nN, nk = N, k + 1
-                key1 = _vkey(nN, nk)
-                if key1 not in _visited:
-                    _visited.add(key1)
-                    np = f"√({path})"
-                    if exact_value_is_integer(nN, nk):
-                        val = exact_integer_value(nN, nk)
-                        if val in _targets_remaining:
-                            _solutions[val] = np
-                            _targets_remaining.discard(val)
-                            payload = json.dumps({'target': val, 'solution': np, 'remaining': len(_targets_remaining)})
-                            yield f"data: {payload}\n\n"
-                            if not _targets_remaining:
-                                break
-                    _queue.append((nN, nk, np))
-
-            # 2. floor
-            if k > 0:
-                fv = int_root_floor(N, k)
-                nN, nk = fv, 0
-                key2 = _vkey(nN, nk)
-                if key2 not in _visited:
-                    _visited.add(key2)
-                    np = f"⌊{path}⌋"
-                    if fv in _targets_remaining:
-                        _solutions[fv] = np
-                        _targets_remaining.discard(fv)
-                        payload = json.dumps({'target': fv, 'solution': np, 'remaining': len(_targets_remaining)})
-                        yield f"data: {payload}\n\n"
-                        if not _targets_remaining:
-                            break
-                    _queue.append((nN, nk, np))
-
-            # 3. factorial
-            if k == 0 and 0 <= N <= MAX_FACTORIAL_ARG:
-                fval = math.factorial(N)
-                nbits = fval.bit_length()
-                if nbits <= MAX_N_BITS:
-                    nN, nk = fval, 0
-                    key3 = _vkey(nN, nk)
-                    if key3 not in _visited:
-                        _visited.add(key3)
-                        np = f"({path})!"
-                        if fval in _targets_remaining:
-                            _solutions[fval] = np
-                            _targets_remaining.discard(fval)
-                            payload = json.dumps({'target': fval, 'solution': np, 'remaining': len(_targets_remaining)})
-                            yield f"data: {payload}\n\n"
-                            if not _targets_remaining:
-                                break
-                        _queue.append((nN, nk, np))
-            if _states_explored % 1000 == 0:  # Har 5000 states baad micro-pause
-                time.sleep(0.002)  # Is se streaming connection zinda rahega
-
-        # Signal done
-        yield f"data: {json.dumps({'done': True, 'total_solved': len(_solutions)})}\n\n"
-
-    return Response(generate(), mimetype='text/event-stream',
-                    headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no',
-                             'Access-Control-Allow-Origin': '*'})
+@app.route('/api/poll_progress')
+def poll_progress():
+    global new_solutions_queue, is_computing, states_explored
+    # Jitne naye solutions mile hain unhein nikal kar frontend ko dein aur queue khali karein
+    batch = list(new_solutions_queue)
+    new_solutions_queue.clear()
+    
+    return jsonify({
+        'new_solutions': batch,
+        'done': not is_computing and len(batch) == 0,
+        'states_explored': states_explored,
+        'total_solved': len(solutions)
+    })
 
 if __name__ == '__main__':
     import os
-    # Use the PORT environment variable if available, otherwise default to 5000
     port = int(os.environ.get("PORT", 5000))
-
-    solver_thread = threading.Thread(target=run_background_solver)
-    solver_thread.daemon = True
-    solver_thread.start()
-
     app.run(host='0.0.0.0', port=port, threaded=True)

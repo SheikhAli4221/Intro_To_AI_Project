@@ -425,70 +425,78 @@ function showResult(data){
   }
 }
 
-/* ══════ SOLVE ALL LIVE — SSE STREAM ═══════════════════════ */
-function doSolveAll(){
-  if(!backendReady||isStreaming)return;
-  isStreaming=true;
-  solveBtn.disabled=true;allBtn.disabled=true;numInput.disabled=true;
-  resultCard.style.display='none';doneBanner.style.display='none';
+/* ══════ SOLVE ALL LIVE — ROBUST POLLING ARCHITECTURE ═══════════════════════ */
+function doSolveAll() {
+  if (!backendReady || isStreaming) return;
+  isStreaming = true;
+  solveBtn.disabled = true; allBtn.disabled = true; numInput.disabled = true;
+  resultCard.style.display = 'none'; doneBanner.style.display = 'none';
 
-  // reset grid
-  document.querySelectorAll('.gc').forEach(c=>{c.className='gc'});
-  solvedMap={};solvedCount.textContent='0';progFill.style.width='0%';
-  liveFeed.innerHTML='';
+  // UI Reset
+  document.querySelectorAll('.gc').forEach(c => { c.className = 'gc' });
+  solvedCount.textContent = '0'; progFill.style.width = '0%';
+  liveFeed.innerHTML = '';
 
-  // restart graph
-  gStop();gStart();
+  gStop(); gStart();
+  allBtn.textContent = '⏳ COMPUTING…';
 
-  let totalSolved=0;
-  const es=new EventSource('https://introtoaiproject-production.up.railway.app/api/stream');
+  let totalSolved = 0;
 
-  es.onmessage=ev=>{
-    const d=JSON.parse(ev.data);
+  // 1. Tell backend to start computing in a separate background thread
+  fetch('https://introtoaiproject-production.up.railway.app/api/start_solve')
+    .then(r => r.json())
+    .then(res => {
+      
+      // 2. Setup a periodic poll timer every 1500ms
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch('https://introtoaiproject-production.up.railway.app/api/poll_progress');
+          if (!response.ok) return;
+          const data = await response.json();
 
-    if(d.done){
-      es.close();isStreaming=false;
-      solveBtn.disabled=false;allBtn.disabled=false;numInput.disabled=false;
-      doneBanner.style.display='block';
-      doneBanner.scrollIntoView({behavior:'smooth',block:'center'});
-      allBtn.textContent='▶ SOLVE ALL LIVE';
-      return;
-    }
+          // Update real-time state counter directly from backend variables
+          gSt = data.states_explored;
+          document.getElementById('counter-text').textContent = `STATES EXPLORED: ${gSt.toLocaleString()}`;
 
-    const t=d.target,sol=d.solution;
-    solvedMap[t]=sol;
-    totalSolved++;
+          // Process batch of new solutions found in this interval
+          data.new_solutions.forEach(d => {
+            const t = d.target, sol = d.solution;
+            totalSolved++;
 
-    // progress
-    solvedCount.textContent=totalSolved;
-    progFill.style.width=totalSolved+'%';
+            solvedCount.textContent = totalSolved;
+            progFill.style.width = totalSolved + '%';
 
-    // grid: flash solving → done → solved
-    cellClass(t,'solving');
-    setTimeout(()=>{ cellClass(t,'done'); setTimeout(()=>cellClass(t,'solved'),600); },200);
+            cellClass(t, 'solving');
+            setTimeout(() => { cellClass(t, 'done'); setTimeout(() => cellClass(t, 'solved'), 600); }, 200);
 
-    // graph node
-    gAddSolved(t);
+            gAddSolved(t);
 
-    // feed item
-    const item=document.createElement('div');
-    item.className='feed-item';
-    const nm=document.createElement('div');nm.className='feed-num';
-    nm.textContent=t;nm.style.background=opCol(sol);nm.style.color='#04080f';
-    const ex=document.createElement('div');ex.className='feed-expr';ex.textContent=sol;
-    const ck=document.createElement('span');ck.className='feed-check';ck.textContent='✓';
-    item.appendChild(nm);item.appendChild(ex);item.appendChild(ck);
-    liveFeed.insertBefore(item,liveFeed.firstChild);
-    while(liveFeed.children.length>80)liveFeed.removeChild(liveFeed.lastChild);
-  };
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            const nm = document.createElement('div'); nm.className = 'feed-num';
+            nm.textContent = t; nm.style.background = opCol(sol); nm.style.color = '#04080f';
+            const ex = document.createElement('div'); ex.className = 'feed-expr'; ex.textContent = sol;
+            const ck = document.createElement('span'); ck.className = 'feed-check'; ck.textContent = '✓';
+            item.appendChild(nm); item.appendChild(ex); item.appendChild(ck);
+            liveFeed.insertBefore(item, liveFeed.firstChild);
+          });
 
-  es.onerror=()=>{
-    es.close();isStreaming=false;
-    solveBtn.disabled=false;allBtn.disabled=false;numInput.disabled=false;
-    statusTxt.textContent='Stream error — check backend is running';
-  };
+          // 3. If backend says computing is done and queue is empty, clear interval
+          if (data.done) {
+            clearInterval(pollInterval);
+            isStreaming = false;
+            solveBtn.disabled = false; allBtn.disabled = false; numInput.disabled = false;
+            doneBanner.style.display = 'block';
+            doneBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            allBtn.textContent = '▶ SOLVE ALL LIVE';
+          }
 
-  allBtn.textContent='⏳ STREAMING…';
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 1500); // Polling frequency set to 1.5 seconds
+
+    });
 }
 
 /* ══════ EVENTS ════════════════════════════════════════════ */
