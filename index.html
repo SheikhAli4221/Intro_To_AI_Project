@@ -25,12 +25,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
-
 #star-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%}
-
 .page{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:36px 22px 100px}
-
-/* HEADER */
 header{text-align:center;padding-bottom:40px}
 .chip{display:inline-block;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--c1);border:1px solid rgba(0,245,255,.25);border-radius:99px;padding:4px 14px;margin-bottom:14px}
 h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-height:.88;letter-spacing:3px;background:linear-gradient(135deg,var(--c1) 0%,var(--c3) 55%,var(--c2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
@@ -41,15 +37,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 .ds{background:var(--c1);box-shadow:0 0 6px var(--c1)}
 .df{background:var(--c2);box-shadow:0 0 6px var(--c2)}
 .dl{background:var(--c3);box-shadow:0 0 6px var(--c3)}
-
-/* STATUS */
 #status-bar{display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-family:'Space Mono',monospace;font-size:11px;margin-bottom:28px;transition:border-color .4s}
 #status-bar.ready{border-color:var(--c1)}
 #sdot{width:9px;height:9px;border-radius:50%;background:var(--muted);animation:blink 1.4s ease-in-out infinite}
 #status-bar.ready #sdot{background:var(--c1);animation:none}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* ACTIONS */
 .actions{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:28px;max-width:700px;margin-left:auto;margin-right:auto}
 #num-input{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-family:'Space Mono',monospace;font-size:18px;color:var(--text);outline:none;transition:border-color .3s,box-shadow .3s;appearance:textfield;width:100%}
 #num-input::-webkit-inner-spin-button{display:none}
@@ -63,18 +55,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 #all-btn{background:linear-gradient(135deg,var(--c2),#e11d8a);color:#fff}
 #solve-btn:hover{box-shadow:var(--glow1)}
 #all-btn:hover{box-shadow:var(--glow2)}
-
-/* PANELS */
 .panels{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-bottom:28px}
 @media(max-width:780px){.panels{grid-template-columns:1fr}}
-
-/* GRAPH */
 .graph-wrap{background:var(--surf);border:1px solid var(--border);border-radius:18px;overflow:hidden;position:relative;min-height:340px}
 #graph-canvas{display:block;width:100%;height:340px}
 .graph-label{position:absolute;bottom:12px;right:14px;font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px}
 #counter-text{position:absolute;bottom:12px;left:14px;font-family:'Space Mono',monospace;font-size:9px;color:var(--c1)}
-
-/* PROGRESS PANEL */
 .progress-panel{background:var(--surf);border:1px solid var(--border);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px}
 .prog-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--c1)}
 .prog-fraction{font-family:'Space Mono',monospace;font-size:36px;font-weight:700;line-height:1}
@@ -82,8 +68,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 .prog-bar-wrap{height:8px;background:rgba(255,255,255,.05);border-radius:99px;overflow:hidden}
 .prog-bar-fill{height:100%;border-radius:99px;width:0%;background:linear-gradient(90deg,var(--c1),var(--c3));transition:width .45s cubic-bezier(.16,1,.3,1);box-shadow:0 0 10px var(--c1)}
 .prog-lbl{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px}
-
-/* LIVE FEED */
 .live-feed{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px;max-height:190px}
 .live-feed::-webkit-scrollbar{width:3px}
 .live-feed::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
@@ -92,8 +76,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 .feed-num{width:26px;height:26px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg)}
 .feed-expr{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:9px}
 .feed-check{color:var(--green);font-size:13px}
-
-/* SINGLE RESULT */
 #result-card{display:none;background:var(--surf);border:1px solid var(--border);border-radius:18px;padding:28px 32px;margin-bottom:24px;animation:slide-up .45s cubic-bezier(.16,1,.3,1) both}
 @keyframes slide-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 #result-card.found{border-color:var(--c1);box-shadow:var(--glow1)}
@@ -109,8 +91,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 .db-wrap{flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:99px;overflow:hidden}
 .db-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c3));border-radius:99px;transition:width .8s cubic-bezier(.16,1,.3,1)}
 .depth-v{font-family:'Space Mono',monospace;font-size:11px;color:var(--c1);min-width:26px;text-align:right}
-
-/* NUMBER GRID */
 .grid-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;text-align:center;margin-bottom:14px}
 #num-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-bottom:60px}
 @media(max-width:500px){#num-grid{grid-template-columns:repeat(5,1fr)}}
@@ -122,19 +102,10 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 @keyframes pulse-cell{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,.5)}50%{box-shadow:0 0 0 5px rgba(251,191,36,0)}}
 .gc.done{border-color:rgba(34,211,160,.7);color:var(--green);background:rgba(34,211,160,.18);animation:flash-cell .5s ease}
 @keyframes flash-cell{0%{background:rgba(34,211,160,.45)}100%{background:rgba(34,211,160,.18)}}
-
-/* DONE BANNER */
 #done-banner{display:none;text-align:center;background:linear-gradient(135deg,rgba(0,245,255,.07),rgba(168,85,247,.07));border:1px solid rgba(0,245,255,.3);border-radius:18px;padding:36px;margin-bottom:28px;animation:slide-up .5s cubic-bezier(.16,1,.3,1)}
 #done-banner h2{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:3px;background:linear-gradient(135deg,var(--c1),var(--c3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 #done-banner p{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px}
-
-/* EXPR COLOURS */
-.hi-s{color:var(--c1)}
-.hi-f{color:var(--c2)}
-.hi-l{color:var(--c3)}
-.hi-n{color:var(--gold)}
-.hi-p{color:var(--muted)}
-
+.hi-s{color:var(--c1)}.hi-f{color:var(--c2)}.hi-l{color:var(--c3)}.hi-n{color:var(--gold)}.hi-p{color:var(--muted)}
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 </style>
@@ -144,7 +115,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 <canvas id="star-canvas"></canvas>
 
 <div class="page">
-
   <header>
     <div class="chip">BFS · Exact Integer Arithmetic · Live Stream</div>
     <h1>Donald Knuth<br>Problem</h1>
@@ -167,14 +137,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
     <button id="all-btn"   class="btn" disabled>▶ SOLVE ALL LIVE</button>
   </div>
 
-  <!-- BFS graph + progress side by side -->
   <div class="panels">
     <div class="graph-wrap">
       <canvas id="graph-canvas"></canvas>
       <div id="counter-text">STATES: 0</div>
       <div class="graph-label">BFS GRAPH TRAVERSAL</div>
     </div>
-
     <div class="progress-panel">
       <div class="prog-title">Live Progress</div>
       <div>
@@ -193,7 +161,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
     </div>
   </div>
 
-  <!-- Single result card -->
   <div id="result-card">
     <div class="res-top">
       <div class="res-badge rb-found" id="res-badge">?</div>
@@ -211,7 +178,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
     </div>
   </div>
 
-  <!-- Done banner -->
   <div id="done-banner">
     <h2>✓ ALL 100 TARGETS SOLVED</h2>
     <p>BFS complete · exact arithmetic · zero hardcoding · pure logic · Python backend</p>
@@ -219,10 +185,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 
   <p class="grid-title">All 100 numbers · green = solved by BFS · click to inspect solution</p>
   <div id="num-grid"></div>
-
 </div>
 
 <script>
+const BASE = 'https://introtoaiproject-production.up.railway.app';
+
 /* ══════ STARFIELD ══════════════════════════════════════════ */
 (()=>{
   const cv=document.getElementById('star-canvas'),ctx=cv.getContext('2d');
@@ -237,17 +204,9 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,9vw,96px);line-heigh
 const GCV=document.getElementById('graph-canvas');
 const GX=GCV.getContext('2d');
 let gN=[],gE=[],gF=0,gRaf=null,gOn=false,gSt=0,gST=0;
-
 function gResize(){const W=GCV.clientWidth,H=GCV.clientHeight,D=devicePixelRatio||1;GCV.width=W*D;GCV.height=H*D;GX.scale(D,D);return{W,H}}
-
-function gStart(){
-  gOn=true;gN=[];gE=[];gF=0;gSt=0;gST=0;
-  const{W,H}=gResize();
-  gN.push({id:0,lbl:'4',x:W/2,y:52,col:'#fbbf24',r:22,born:0,vx:0,vy:0});
-  gLoop();
-}
+function gStart(){gOn=true;gN=[];gE=[];gF=0;gSt=0;gST=0;const{W,H}=gResize();gN.push({id:0,lbl:'4',x:W/2,y:52,col:'#fbbf24',r:22,born:0,vx:0,vy:0});gLoop();}
 function gStop(){gOn=false;if(gRaf)cancelAnimationFrame(gRaf)}
-
 function gSpawn(col){
   const W=GCV.clientWidth,H=GCV.clientHeight;
   if(gN.length>=65)return;
@@ -261,8 +220,6 @@ function gSpawn(col){
   gN.push({id,lbl:'·',x:nx,y:ny,col:C,r:14,born:gF,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3});
   if(par)gE.push({from:par.id,to:id,born:gF,col:C});
 }
-
-// Called when a real solution arrives — add a glowing solved node
 function gAddSolved(t){
   const W=GCV.clientWidth,H=GCV.clientHeight;
   const par=gN[Math.floor(Math.random()*Math.min(gN.length,8))];
@@ -274,36 +231,28 @@ function gAddSolved(t){
   gN.push({id,lbl:String(t),x:nx,y:ny,col:'#22d3a0',r:21,born:gF,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,solved:true});
   if(par)gE.push({from:par.id,to:id,born:gF,col:'#22d3a0'});
 }
-
 function gLoop(){
-  if(!gOn)return;
-  gF++;gSt+=Math.floor(Math.random()*20+10);gST++;
+  if(!gOn)return;gF++;gSt+=Math.floor(Math.random()*20+10);gST++;
   if(gST>=4){gST=0;gSpawn()}
   gDraw();
   document.getElementById('counter-text').textContent=`STATES EXPLORED: ${gSt.toLocaleString()}`;
   gRaf=requestAnimationFrame(gLoop);
 }
-
 function gDraw(){
   const W=GCV.clientWidth,H=GCV.clientHeight;
   GX.clearRect(0,0,W,H);
-  // grid
   GX.strokeStyle='rgba(255,255,255,.018)';GX.lineWidth=1;
   for(let x=0;x<W;x+=36){GX.beginPath();GX.moveTo(x,0);GX.lineTo(x,H);GX.stroke()}
   for(let y=0;y<H;y+=36){GX.beginPath();GX.moveTo(0,y);GX.lineTo(W,y);GX.stroke()}
-  // physics
   for(const n of gN){n.x+=n.vx;n.y+=n.vy;if(n.x<n.r||n.x>W-n.r)n.vx*=-.9;if(n.y<n.r||n.y>H-n.r)n.vy*=-.9}
-  // edges
   GX.setLineDash([3,5]);GX.lineDashOffset=-gF*.55;
   for(const e of gE){
     const a=gN[e.from],b=gN[e.to];if(!a||!b)continue;
     const age=gF-e.born;
-    GX.globalAlpha=Math.min(1,age/10)*.38;
-    GX.strokeStyle=e.col;GX.lineWidth=1.2;
+    GX.globalAlpha=Math.min(1,age/10)*.38;GX.strokeStyle=e.col;GX.lineWidth=1.2;
     GX.beginPath();GX.moveTo(a.x,a.y);GX.lineTo(b.x,b.y);GX.stroke();
   }
   GX.setLineDash([]);GX.globalAlpha=1;
-  // nodes
   for(const n of gN){
     const sc=Math.min(1,(gF-n.born)/7);
     GX.save();GX.translate(n.x,n.y);GX.scale(sc,sc);
@@ -316,14 +265,13 @@ function gDraw(){
     GX.textAlign='center';GX.textBaseline='middle';GX.fillText(n.lbl,0,0);
     GX.restore();
   }
-  // scan
   const sy=((gF*1.25)%(H+22))-11;
   const sg=GX.createLinearGradient(0,sy-16,0,sy+16);
   sg.addColorStop(0,'rgba(0,245,255,0)');sg.addColorStop(.5,'rgba(0,245,255,.05)');sg.addColorStop(1,'rgba(0,245,255,0)');
   GX.fillStyle=sg;GX.fillRect(0,sy-16,W,32);
 }
 
-/* ══════ EXPR HIGHLIGHTER ══════════════════════════════════ */
+/* ══════ HELPERS ═══════════════════════════════════════════ */
 function hi(e){
   return e
     .replace(/\(/g,'<span class="hi-p">(</span>')
@@ -338,192 +286,220 @@ function depth(e){let d=0,m=0;for(const c of e){if(c==='('||c==='√'||c==='⌊'
 function opCol(s){if(s.startsWith('('))return'#ff6b35';if(s.startsWith('√'))return'#00f5ff';if(s.startsWith('⌊'))return'#a855f7';return'#fbbf24'}
 
 /* ══════ DOM REFS ══════════════════════════════════════════ */
-const statusBar=document.getElementById('status-bar');
-const statusTxt=document.getElementById('status-text');
-const solveBtn=document.getElementById('solve-btn');
-const allBtn=document.getElementById('all-btn');
-const numInput=document.getElementById('num-input');
-const resultCard=document.getElementById('result-card');
-const resBadge=document.getElementById('res-badge');
-const resSmall=document.getElementById('res-small');
-const resHead=document.getElementById('res-head');
-const exprBox=document.getElementById('expr-box');
-const dbFill=document.getElementById('db-fill');
-const depthV=document.getElementById('depth-v');
-const liveFeed=document.getElementById('live-feed');
-const solvedCount=document.getElementById('solved-count');
-const progFill=document.getElementById('prog-fill');
-const doneBanner=document.getElementById('done-banner');
+const statusBar   = document.getElementById('status-bar');
+const statusTxt   = document.getElementById('status-text');
+const solveBtn    = document.getElementById('solve-btn');
+const allBtn      = document.getElementById('all-btn');
+const numInput    = document.getElementById('num-input');
+const resultCard  = document.getElementById('result-card');
+const resBadge    = document.getElementById('res-badge');
+const resSmall    = document.getElementById('res-small');
+const resHead     = document.getElementById('res-head');
+const exprBox     = document.getElementById('expr-box');
+const dbFill      = document.getElementById('db-fill');
+const depthV      = document.getElementById('depth-v');
+const liveFeed    = document.getElementById('live-feed');
+const solvedCount = document.getElementById('solved-count');
+const progFill    = document.getElementById('prog-fill');
+const doneBanner  = document.getElementById('done-banner');
 
-let backendReady=false,isStreaming=false,solvedMap={};
+let backendReady = false, isStreaming = false, solvedMap = {};
 
 /* ══════ GRID ══════════════════════════════════════════════ */
 function buildGrid(){
-  const g=document.getElementById('num-grid');
+  const g = document.getElementById('num-grid');
   for(let i=1;i<=100;i++){
-    const c=document.createElement('div');
-    c.className='gc';c.textContent=i;c.id=`gc-${i}`;
-    c.addEventListener('click',()=>{numInput.value=i;doSolve()});
+    const c = document.createElement('div');
+    c.className='gc'; c.textContent=i; c.id=`gc-${i}`;
+    c.addEventListener('click',()=>{numInput.value=i; doSolve()});
     g.appendChild(c);
   }
 }
-function cellClass(t,cls){const c=document.getElementById(`gc-${t}`);if(c){c.className='gc '+cls}}
+function cellClass(t,cls){const c=document.getElementById(`gc-${t}`);if(c)c.className='gc '+cls}
 
 /* ══════ BACKEND CHECK ═════════════════════════════════════ */
-/* ══════ BACKEND CHECK (FIXED FOR ASYNC BACKEND) ═══════════════════════ */
 async function checkBackend(){
-  try{
-    const r=await fetch('https://introtoaiproject-production.up.railway.app/api/status');
-    if(!r.ok)throw 0;
-    const d=await r.json();
-    
-    // FIXED: Ab hum d.ready ka wait nahi karenge, bas check karenge data sahi aaya hai ya nahi
-    if(d && typeof d.solved !== 'undefined'){
-      statusBar.classList.add('ready');
-      statusTxt.textContent=`✓ Backend Cloud Live — Click 'SOLVE ALL LIVE' to start`;
-      solveBtn.disabled=false;
-      allBtn.disabled=false;
-      backendReady=true;
-      gStart();
-    }
-  }catch{
-    statusBar.classList.remove('ready');
-    statusTxt.textContent='Backend offline — checking connection again...';
-    setTimeout(checkBackend,3000);
-  }
+  try{
+    const r = await fetch(`${BASE}/api/status`);
+    if(!r.ok) throw 0;
+    const d = await r.json();
+    if(d && typeof d.solved !== 'undefined'){
+      statusBar.classList.add('ready');
+      statusTxt.textContent = `✓ Backend Cloud Live — Click 'SOLVE ALL LIVE' to start`;
+      solveBtn.disabled = false;
+      allBtn.disabled   = false;
+      backendReady      = true;
+      gStart();
+
+      // ✅ FIX 1: Page reload pe agar backend mein pehle se solutions hain,
+      // toh unhe sync karo — grid green ho jaayegi aur SOLVE kaam karega
+      if(d.solved > 0){
+        syncAllSolutions();
+      }
+    }
+  }catch{
+    statusBar.classList.remove('ready');
+    statusTxt.textContent = 'Backend offline — checking again...';
+    setTimeout(checkBackend, 3000);
+  }
 }
 
-/* ══════ SOLVE SINGLE (UPDATED: COLD-START & OFFLINE PROOF) ══════════════ */
+// ✅ FIX 1 helper: /api/all_solutions se saara data ek baar fetch karo
+async function syncAllSolutions(){
+  try{
+    const r = await fetch(`${BASE}/api/all_solutions`);
+    if(!r.ok) return;
+    const d = await r.json();
+    const sols = d.solutions || {};
+    let count = 0;
+    for(const [key, sol] of Object.entries(sols)){
+      const t = parseInt(key);
+      solvedMap[t] = sol;
+      cellClass(t, 'solved');
+      count++;
+    }
+    solvedCount.textContent = count;
+    progFill.style.width    = count + '%';
+    if(count === 100) doneBanner.style.display = 'block';
+    statusTxt.textContent = `✓ Backend Live — ${count}/100 already solved. Click 'SOLVE ALL LIVE' to re-run.`;
+  }catch(e){
+    console.warn('Could not sync solutions:', e);
+  }
+}
+
+/* ══════ SOLVE SINGLE ══════════════════════════════════════ */
 async function doSolve(){
-  if(!backendReady || isStreaming) return;
-  const val = parseInt(numInput.value);
-  if(isNaN(val)||val<1||val>100){numInput.style.borderColor='#ff6b35';setTimeout(()=>numInput.style.borderColor='',900);return}
-  
-  document.querySelectorAll('.gc').forEach(c=>{if(!c.classList.contains('solved')&&!c.classList.contains('done'))c.classList.remove('active')});
-  const cell = document.getElementById(`gc-${val}`);
-  if(cell){cell.classList.add('active'); cell.scrollIntoView({behavior:'smooth',block:'nearest'})}
-  
-  solveBtn.disabled = true; 
-  
-  // OPTIMIZATION: Agar yeh number hum live streaming mein pehle hi solve kar chuke hain,
-  // toh server par request bhej kar wait karne ki zaroorat nahi, seedha display karo!
-  if (solvedMap && solvedMap[val]) {
-      showResult({ found: true, target: val, solution: solvedMap[val] });
-      solveBtn.disabled = false;
-      return;
+  if(!backendReady || isStreaming) return;
+  const val = parseInt(numInput.value);
+  if(isNaN(val)||val<1||val>100){
+    numInput.style.borderColor='#ff6b35';
+    setTimeout(()=>numInput.style.borderColor='',900);
+    return;
   }
 
-  // Agar memory mein nahi hai (jaise page fresh load hua hai), toh server se mangwao
-  try {
-    const r = await fetch(`https://introtoaiproject-production.up.railway.app/api/solve/${val}`);
-    const data = await r.json();
-    showResult(data);
-  } catch {
-    resultCard.style.display = 'block';
+  document.querySelectorAll('.gc').forEach(c=>{
+    if(!c.classList.contains('solved')&&!c.classList.contains('done'))
+      c.classList.remove('active')
+  });
+  const cell = document.getElementById(`gc-${val}`);
+  if(cell){cell.classList.add('active'); cell.scrollIntoView({behavior:'smooth',block:'nearest'})}
+
+  solveBtn.disabled = true;
+
+  // Cache hit — no network needed
+  if(solvedMap[val]){
+    showResult({found:true, target:val, solution:solvedMap[val]});
+    solveBtn.disabled = false;
+    return;
+  }
+
+  // Fetch from backend (/api/solve/<val> — now exists!)
+  try{
+    const r = await fetch(`${BASE}/api/solve/${val}`);
+    const data = await r.json();
+    // ✅ FIX 2: Cache the result so next click is instant
+    if(data && data.found) solvedMap[val] = data.solution;
+    showResult(data);
+  }catch{
+    resultCard.style.display = 'block';
     resultCard.className = '';
-    resHead.textContent = 'Connection Error';
-    exprBox.textContent = 'Backend is currently sleeping. Click "▶ SOLVE ALL LIVE" to wake it up and sync numbers.';
-  }
-  solveBtn.disabled = false;
+    resHead.textContent = 'Connection Error';
+    exprBox.textContent = 'Backend is sleeping. Click "▶ SOLVE ALL LIVE" to wake it up.';
+  }
+  solveBtn.disabled = false;
 }
 
 function showResult(data){
-  resultCard.style.display = 'block';
-  if(data && data.found){
-    resultCard.className = 'found';
-    resBadge.className = 'res-badge rb-found'; resBadge.textContent = data.target;
-    resSmall.textContent = 'SOLUTION FOUND'; resHead.textContent = `Target: ${data.target}`;
-    exprBox.innerHTML = hi(data.solution) + ` <span class="hi-p">= ${data.target}</span>`;
-    const dep = depth(data.solution);
-    dbFill.style.width = Math.min(100, dep/2)+'%'; depthV.textContent = dep;
-  } else {
-    // Agar number abhi tak dhoonda hi nahi gaya
+  resultCard.style.display = 'block';
+  if(data && data.found){
+    resultCard.className = 'found';
+    resBadge.className   = 'res-badge rb-found'; resBadge.textContent = data.target;
+    resSmall.textContent = 'SOLUTION FOUND'; resHead.textContent = `Target: ${data.target}`;
+    exprBox.innerHTML    = hi(data.solution) + ` <span class="hi-p">= ${data.target}</span>`;
+    const dep = depth(data.solution);
+    dbFill.style.width = Math.min(100, dep/2)+'%'; depthV.textContent = dep;
+  }else{
     resultCard.className = '';
-    resBadge.className = 'res-badge'; resBadge.textContent = '?';
-    resSmall.textContent = 'NOT FOUND YET'; resHead.textContent = `Target: ${data.target || numInput.value}`;
-    exprBox.textContent = 'This number has not been explored by BFS yet. Run the live stream solver to find it.';
-    dbFill.style.width = '0%'; depthV.textContent = '0';
+    resBadge.className   = 'res-badge'; resBadge.textContent = '?';
+    resSmall.textContent = 'NOT FOUND YET'; resHead.textContent = `Target: ${data.target||numInput.value}`;
+    exprBox.textContent  = 'This number has not been explored by BFS yet. Run the live stream solver to find it.';
+    dbFill.style.width   = '0%'; depthV.textContent = '0';
   }
 }
 
-/* ══════ SOLVE ALL LIVE — ROBUST POLLING ARCHITECTURE ═══════════════════════ */
-function doSolveAll() {
-  if (!backendReady || isStreaming) return;
+/* ══════ SOLVE ALL LIVE ════════════════════════════════════ */
+function doSolveAll(){
+  if(!backendReady || isStreaming) return;
   isStreaming = true;
   solveBtn.disabled = true; allBtn.disabled = true; numInput.disabled = true;
   resultCard.style.display = 'none'; doneBanner.style.display = 'none';
 
-  // UI Reset
-  document.querySelectorAll('.gc').forEach(c => { c.className = 'gc' });
+  document.querySelectorAll('.gc').forEach(c=>{ c.className='gc' });
   solvedCount.textContent = '0'; progFill.style.width = '0%';
   liveFeed.innerHTML = '';
+  solvedMap = {}; // reset cache for fresh run
 
   gStop(); gStart();
   allBtn.textContent = '⏳ COMPUTING…';
 
   let totalSolved = 0;
 
-  // 1. Tell backend to start computing in a separate background thread
-  fetch('https://introtoaiproject-production.up.railway.app/api/start_solve')
-    .then(r => r.json())
-    .then(res => {
-      
-      // 2. Setup a periodic poll timer every 1500ms
-      const pollInterval = setInterval(async () => {
-        try {
-          const response = await fetch('https://introtoaiproject-production.up.railway.app/api/poll_progress');
-          if (!response.ok) return;
+  fetch(`${BASE}/api/start_solve`)
+    .then(r=>r.json())
+    .then(()=>{
+      const pollInterval = setInterval(async ()=>{
+        try{
+          const response = await fetch(`${BASE}/api/poll_progress`);
+          if(!response.ok) return;
           const data = await response.json();
 
-          // Update real-time state counter directly from backend variables
           gSt = data.states_explored;
           document.getElementById('counter-text').textContent = `STATES EXPLORED: ${gSt.toLocaleString()}`;
 
-          // Process batch of new solutions found in this interval
-          data.new_solutions.forEach(d => {
+          data.new_solutions.forEach(d=>{
             const t = d.target, sol = d.solution;
             totalSolved++;
 
-            solvedCount.textContent = totalSolved;
-            progFill.style.width = totalSolved + '%';
+            // ✅ FIX 3: solvedMap update karo — yeh MISSING tha!
+            // Bina iske cell click pe hamesha "Connection Error" aata tha
+            solvedMap[t] = sol;
 
-            cellClass(t, 'solving');
-            setTimeout(() => { cellClass(t, 'done'); setTimeout(() => cellClass(t, 'solved'), 600); }, 200);
+            solvedCount.textContent = totalSolved;
+            progFill.style.width    = totalSolved + '%';
+
+            cellClass(t,'solving');
+            setTimeout(()=>{ cellClass(t,'done'); setTimeout(()=>cellClass(t,'solved'),600); },200);
 
             gAddSolved(t);
 
-            const item = document.createElement('div');
-            item.className = 'feed-item';
-            const nm = document.createElement('div'); nm.className = 'feed-num';
-            nm.textContent = t; nm.style.background = opCol(sol); nm.style.color = '#04080f';
-            const ex = document.createElement('div'); ex.className = 'feed-expr'; ex.textContent = sol;
-            const ck = document.createElement('span'); ck.className = 'feed-check'; ck.textContent = '✓';
+            const item = document.createElement('div'); item.className='feed-item';
+            const nm   = document.createElement('div'); nm.className='feed-num';
+            nm.textContent=t; nm.style.background=opCol(sol); nm.style.color='#04080f';
+            const ex = document.createElement('div'); ex.className='feed-expr'; ex.textContent=sol;
+            const ck = document.createElement('span'); ck.className='feed-check'; ck.textContent='✓';
             item.appendChild(nm); item.appendChild(ex); item.appendChild(ck);
             liveFeed.insertBefore(item, liveFeed.firstChild);
           });
 
-          // 3. If backend says computing is done and queue is empty, clear interval
-          if (data.done) {
+          if(data.done){
             clearInterval(pollInterval);
             isStreaming = false;
-            solveBtn.disabled = false; allBtn.disabled = false; numInput.disabled = false;
-            doneBanner.style.display = 'block';
-            doneBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            allBtn.textContent = '▶ SOLVE ALL LIVE';
+            solveBtn.disabled=false; allBtn.disabled=false; numInput.disabled=false;
+            doneBanner.style.display='block';
+            doneBanner.scrollIntoView({behavior:'smooth',block:'center'});
+            allBtn.textContent='▶ SOLVE ALL LIVE';
           }
-
-        } catch (err) {
-          console.error("Polling error:", err);
+        }catch(err){
+          console.error('Polling error:', err);
         }
-      }, 1500); // Polling frequency set to 1.5 seconds
-
+      }, 1500);
     });
 }
 
 /* ══════ EVENTS ════════════════════════════════════════════ */
-solveBtn.addEventListener('click',doSolve);
-allBtn.addEventListener('click',doSolveAll);
-numInput.addEventListener('keydown',e=>{ if(e.key==='Enter')doSolve(); });
+solveBtn.addEventListener('click', doSolve);
+allBtn.addEventListener('click', doSolveAll);
+numInput.addEventListener('keydown', e=>{ if(e.key==='Enter') doSolve(); });
 
 buildGrid();
 checkBackend();
