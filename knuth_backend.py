@@ -244,7 +244,7 @@ def run_bfs_solver():
                     _visited.add((nN, nk))
                     np = f"({path})!"
                     if fval in _targets_remaining:
-                        solutions[val] = np
+                        solutions[fval] = np
                         _targets_remaining.discard(fval)
                         new_solutions_queue.append({'target': fval, 'solution': np})
                 _queue.append((nN, nk, np))
