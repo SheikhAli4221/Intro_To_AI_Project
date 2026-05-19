@@ -372,7 +372,7 @@ function cellClass(t,cls){const c=document.getElementById(`gc-${t}`);if(c){c.cla
 /* ══════ BACKEND CHECK ═════════════════════════════════════ */
 async function checkBackend(){
   try{
-    const r=await fetch('introtoaiproject-production.up.railway.app/api/status');
+    const r=await fetch('https://introtoaiproject-production.up.railway.app/api/status');
     if(!r.ok)throw 0;
     const d=await r.json();
     if(d.ready){
@@ -398,7 +398,7 @@ async function doSolve(){
   if(cell){cell.classList.add('active');cell.scrollIntoView({behavior:'smooth',block:'nearest'})}
   solveBtn.disabled=true;resultCard.style.display='none';
   try{
-    const r=await fetch(`introtoaiproject-production.up.railway.app/api/solve/${val}`);
+    const r=await fetch(`https://introtoaiproject-production.up.railway.app/api/solve/${val}`);
     const data=await r.json();
     showResult(data);
   }catch{
@@ -436,7 +436,7 @@ function doSolveAll(){
   gStop();gStart();
 
   let totalSolved=0;
-  const es=new EventSource('introtoaiproject-production.up.railway.app/api/stream');
+  const es=new EventSource('https://introtoaiproject-production.up.railway.app/api/stream');
 
   es.onmessage=ev=>{
     const d=JSON.parse(ev.data);
