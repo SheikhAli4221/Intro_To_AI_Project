@@ -338,8 +338,8 @@ def stream_solutions():
                             if not _targets_remaining:
                                 break
                         _queue.append((nN, nk, np))
-            if _states_explored % 5000 == 0:  # Har 5000 states baad micro-pause
-                time.sleep(0.001)  # Is se streaming connection zinda rahega
+            if _states_explored % 1000 == 0:  # Har 5000 states baad micro-pause
+                time.sleep(0.002)  # Is se streaming connection zinda rahega
 
         # Signal done
         yield f"data: {json.dumps({'done': True, 'total_solved': len(_solutions)})}\n\n"
