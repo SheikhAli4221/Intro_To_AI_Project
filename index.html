@@ -330,9 +330,6 @@ async function checkBackend(){
       allBtn.disabled   = false;
       backendReady      = true;
       gStart();
-
-      // ✅ FIX 1: Page reload pe agar backend mein pehle se solutions hain,
-      // toh unhe sync karo — grid green ho jaayegi aur SOLVE kaam karega
       if(d.solved > 0){
         syncAllSolutions();
       }
@@ -344,7 +341,6 @@ async function checkBackend(){
   }
 }
 
-// ✅ FIX 1 helper: /api/all_solutions se saara data ek baar fetch karo
 async function syncAllSolutions(){
   try{
     const r = await fetch(`${BASE}/api/all_solutions`);
@@ -386,18 +382,15 @@ async function doSolve(){
 
   solveBtn.disabled = true;
 
-  // Cache hit — no network needed
   if(solvedMap[val]){
     showResult({found:true, target:val, solution:solvedMap[val]});
     solveBtn.disabled = false;
     return;
   }
 
-  // Fetch from backend (/api/solve/<val> — now exists!)
   try{
     const r = await fetch(`${BASE}/api/solve/${val}`);
     const data = await r.json();
-    // ✅ FIX 2: Cache the result so next click is instant
     if(data && data.found) solvedMap[val] = data.solution;
     showResult(data);
   }catch{
@@ -459,9 +452,6 @@ function doSolveAll(){
           data.new_solutions.forEach(d=>{
             const t = d.target, sol = d.solution;
             totalSolved++;
-
-            // ✅ FIX 3: solvedMap update karo — yeh MISSING tha!
-            // Bina iske cell click pe hamesha "Connection Error" aata tha
             solvedMap[t] = sol;
 
             solvedCount.textContent = totalSolved;

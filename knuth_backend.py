@@ -1,8 +1,3 @@
-"""
-Donald Knuth Problem Solver — Exact Arithmetic BFS
-Flask Backend — FULLY FIXED VERSION
-"""
-
 import math
 import threading
 import time
@@ -175,8 +170,6 @@ def poll_progress():
         'states_explored': states_explored,
         'total_solved': len(solutions)
     })
-
-# ✅ FIX: Yeh route MISSING tha — cell click / SOLVE button = 404 = "Connection Error"
 @app.route('/api/solve/<int:val>')
 def solve_single(val):
     if not (1 <= val <= 100):
@@ -185,7 +178,6 @@ def solve_single(val):
         return jsonify({'found': True, 'target': val, 'solution': solutions[val]})
     return jsonify({'found': False, 'target': val})
 
-# ✅ BONUS: Page reload pe saare solutions ek baar sync karne ke liye
 @app.route('/api/all_solutions')
 def all_solutions():
     return jsonify({
